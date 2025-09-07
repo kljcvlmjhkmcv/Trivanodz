@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivano - Services Numériques Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .floating {
+            animation: floating 4s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .service-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .service-card:hover {
+            background: rgba(255, 255, 255, 1);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        .pricing-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0);
+            z-index: 1000;
+            backdrop-filter: blur(0px);
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-modal.show {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        
+        .pricing-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 2rem auto;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%) scale(0.8);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .pricing-content.show {
+            transform: translateY(-50%) scale(1);
+            opacity: 1;
+        }
+        
+        .contact-options {
+            display: none;
+            position: absolute;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            z-index: 100;
+            min-width: 220px;
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .contact-options.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .service-icon {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .service-card:hover .service-icon::before {
+            left: 100%;
+        }
+        
+        .btn-smooth {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-smooth::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-smooth:hover::before {
+            left: 100%;
+        }
+        
+        .btn-smooth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .btn-smooth:active {
+            transform: translateY(0);
+            transition: all 0.1s ease;
+        }
+        
+        .pricing-option {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-option:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .unavailable {
+            opacity: 0.5;
+            position: relative;
+        }
+        
+        .unavailable::after {
+            content: 'Rupture de stock';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-content {
+                margin: 1rem;
+                max-height: 85vh;
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Header -->
+    <header class="container mx-auto px-6 py-8">
+        <nav class="flex justify-between items-center">
+            <div class="text-white text-3xl font-bold floating">
+                <i class="fas fa-play-circle mr-2"></i>Trivano
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#home" onclick="smoothScroll('home')" class="text-white hover:text-gray-200 transition-all duration-300 cursor-pointer btn-smooth px-3 py-2 rounded-lg">Home</a>
+                <a href="#services" onclick="smoothScroll('services')" class="text-white hover:text-gray-200 transition-all duration-300 cursor-pointer btn-smooth px-3 py-2 rounded-lg">Services</a>
+                <a href="#contact" onclick="smoothScroll('contact')" class="text-white hover:text-gray-200 transition-all duration-300 cursor-pointer btn-smooth px-3 py-2 rounded-lg">Contact</a>
+            </div>
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white text-2xl" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden mt-4 space-y-4">
+            <a href="#home" onclick="smoothScroll('home')" class="block text-white hover:text-gray-200 transition-colors">Home</a>
+            <a href="#services" onclick="smoothScroll('services')" class="block text-white hover:text-gray-200 transition-colors">Services</a>
+            <a href="#contact" onclick="smoothScroll('contact')" class="block text-white hover:text-gray-200 transition-colors">Contact</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="container mx-auto px-6 py-16 text-center">
+        <div class="fade-in">
+            <h1 class="text-4xl md:text-7xl font-bold text-white mb-6">
+                Services <span class="text-white">Premium</span>
+            </h1>
+            <p class="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+                Découvrez nos abonnements numériques de qualité supérieure pour tous vos divertissements préférés
+            </p>
+            <button onclick="smoothScroll('services')" class="bg-white text-purple-800 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 btn-smooth">
+                Voir nos offres
+            </button>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="container mx-auto px-6 py-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-white text-center mb-16 fade-in">Nos Services Premium</h2>
+        
+        <div id="servicesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <!-- Services will be generated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Pricing Modal -->
+    <div id="pricingModal" class="pricing-modal">
+        <div class="pricing-content">
+            <div class="p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="modalTitle" class="text-2xl md:text-3xl font-bold text-gray-800"></h3>
+                    <button onclick="closePricingModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="pricingOptions" class="space-y-4">
+                    <!-- Pricing options will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container mx-auto px-6 py-16">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Contactez-nous</h2>
+            <p class="text-lg md:text-xl text-white/80">Choisissez votre moyen de communication préféré</p>
+        </div>
+        
+        <div class="flex flex-wrap justify-center gap-6 md:gap-8">
+            <a href="" id="whatsappLink" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center space-x-3 btn-smooth">
+                <i class="fab fa-whatsapp text-xl md:text-2xl"></i>
+                <span class="font-semibold">WhatsApp</span>
+            </a>
+            
+            <a href="" id="instagramLink" target="_blank" class="bg-pink-500 hover:bg-pink-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center space-x-3 btn-smooth">
+                <i class="fab fa-instagram text-xl md:text-2xl"></i>
+                <span class="font-semibold">Instagram</span>
+            </a>
+            
+            <a href="" id="messengerLink" target="_blank" class="bg-blue-500 hover:bg-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center space-x-3 btn-smooth">
+                <i class="fab fa-facebook-messenger text-xl md:text-2xl"></i>
+                <span class="font-semibold">Messenger</span>
+            </a>
+        </div>
+        
+        <!-- Phone Contact -->
+        <div class="text-center mt-8">
+            <p class="text-white/80 mb-2">Ou appelez-nous directement :</p>
+            <a href="" id="phoneLink" class="text-white text-xl md:text-2xl font-bold hover:text-gray-200 transition-colors">
+                <i class="fas fa-phone mr-2"></i><span id="phoneNumber">+213 XXX XXX XXX</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="container mx-auto px-6 py-8 text-center">
+        <div class="border-t border-white/20 pt-8">
+            <p class="text-white/60 mb-4">© 2024 Trivano - Services Numériques Premium</p>
+            <p class="text-white/60">
+                <i class="fas fa-map-marker-alt mr-2"></i>Algérie
+                <span class="mx-4">|</span>
+                <a href="https://trivanodz.store" class="text-white hover:text-gray-200">trivanodz.store</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // ==================== CONFIGURATION SECTION ====================
+        // Contact Links - Edit these URLs
+        const CONTACT_LINKS = {
+            whatsapp: 'https://wa.me/213XXXXXXXXX',
+            instagram: 'https://instagram.com/trivano',
+            messenger: 'https://m.me/trivano',
+            phone: '+213 XXX XXX XXX'
+        };
+
+        // Services Configuration - Add/Edit services here
+        const SERVICES = [
+            {
+                name: 'IPTV',
+                color: 'red',
+                pricing: {
+                    '1': { price: 1500, available: true, show: true },
+                    '2': { price: 2800, available: true, show: true },
+                    '3': { price: 4000, available: true, show: true },
+                    '6': { price: 7500, available: true, show: true },
+                    '12': { price: 14000, available: true, show: true }
+                }
+            },
+            {
+                name: 'Netflix',
+                color: 'red',
+                pricing: {
+                    '1': { price: 800, available: true, show: true },
+                    '2': { price: 1500, available: true, show: true },
+                    '3': { price: 2100, available: true, show: true, bonus: '+ 3 mois Prime Video gratuit' },
+                    '6': { price: 4000, available: true, show: true, bonus: '+ 6 mois Prime Video gratuit' },
+                    '12': { price: 7500, available: true, show: true, bonus: '+ 12 mois Prime Video gratuit' }
+                }
+            },
+            {
+                name: 'Prime Video',
+                color: 'blue',
+                pricing: {
+                    '1': { price: 600, available: true, show: true },
+                    '2': { price: 1100, available: true, show: true },
+                    '3': { price: 1600, available: true, show: true },
+                    '6': { price: 3000, available: true, show: true },
+                    '12': { price: 5500, available: true, show: true }
+                }
+            },
+            {
+                name: 'Disney+',
+                color: 'blue',
+                pricing: {
+                    '1': { price: 700, available: true, show: true },
+                    '2': { price: 1300, available: true, show: true },
+                    '3': { price: 1900, available: true, show: true },
+                    '6': { price: 3600, available: true, show: true },
+                    '12': { price: 6800, available: true, show: true }
+                }
+            },
+            {
+                name: 'OSN+',
+                color: 'purple',
+                pricing: {
+                    '1': { price: 900, available: true, show: true },
+                    '2': { price: 1700, available: true, show: true },
+                    '3': { price: 2400, available: true, show: true },
+                    '6': { price: 4500, available: true, show: true },
+                    '12': { price: 8500, available: true, show: true }
+                }
+            },
+            {
+                name: 'Snapchat+',
+                color: 'yellow',
+                pricing: {
+                    '1': { price: 400, available: true, show: true },
+                    '2': { price: 750, available: true, show: true },
+                    '3': { price: 1100, available: true, show: true },
+                    '6': { price: 2000, available: true, show: true },
+                    '12': { price: 3800, available: true, show: true }
+                }
+            },
+            {
+                name: 'Shahid VIP',
+                color: 'green',
+                pricing: {
+                    '1': { price: 650, available: true, show: true },
+                    '2': { price: 1200, available: true, show: true },
+                    '3': { price: 1750, available: true, show: true },
+                    '6': { price: 3300, available: true, show: true },
+                    '12': { price: 6200, available: true, show: true }
+                }
+            },
+            {
+                name: 'Spotify',
+                color: 'green',
+                pricing: {
+                    '1': { price: 500, available: true, show: true },
+                    '2': { price: 950, available: true, show: true },
+                    '3': { price: 1400, available: true, show: true },
+                    '6': { price: 2600, available: true, show: true },
+                    '12': { price: 4800, available: true, show: true }
+                }
+            },
+            {
+                name: 'Crunchyroll',
+                color: 'orange',
+                pricing: {
+                    '1': { price: 550, available: true, show: true },
+                    '2': { price: 1000, available: true, show: true },
+                    '3': { price: 1500, available: true, show: true },
+                    '6': { price: 2800, available: true, show: true },
+                    '12': { price: 5200, available: true, show: true }
+                }
+            }
+        ];
+        // ==================== END CONFIGURATION SECTION ====================
+
+        // Initialize contact links
+        function initializeContactLinks() {
+            document.getElementById('whatsappLink').href = CONTACT_LINKS.whatsapp;
+            document.getElementById('instagramLink').href = CONTACT_LINKS.instagram;
+            document.getElementById('messengerLink').href = CONTACT_LINKS.messenger;
+            document.getElementById('phoneLink').href = `tel:${CONTACT_LINKS.phone}`;
+            document.getElementById('phoneNumber').textContent = CONTACT_LINKS.phone;
+        }
+
+        // Generate services
+        function generateServices() {
+            const container = document.getElementById('servicesContainer');
+            container.innerHTML = '';
+
+            SERVICES.forEach((service, index) => {
+                const serviceCard = document.createElement('div');
+                serviceCard.className = `service-card rounded-2xl p-6 md:p-8 card-hover fade-in cursor-pointer`;
+                serviceCard.style.animationDelay = `${index * 0.1}s`;
+                serviceCard.onclick = () => openPricingModal(service);
+
+                const colorClasses = {
+                    red: 'from-red-400 to-red-500',
+                    blue: 'from-blue-400 to-blue-500',
+                    purple: 'from-purple-400 to-purple-500',
+                    yellow: 'from-yellow-300 to-yellow-400',
+                    green: 'from-green-400 to-green-500',
+                    orange: 'from-orange-400 to-orange-500'
+                };
+
+                const serviceIcons = {
+                    'IPTV': 'TV',
+                    'Netflix': 'N',
+                    'Prime Video': 'P',
+                    'Disney+': 'D+',
+                    'OSN+': 'OSN',
+                    'Snapchat+': 'S+',
+                    'Shahid VIP': 'SH',
+                    'Spotify': 'SP',
+                    'Crunchyroll': 'CR'
+                };
+
+                serviceCard.innerHTML = `
+                    <div class="text-center">
+                        <div class="service-icon bg-gradient-to-br ${colorClasses[service.color]} text-white p-8 md:p-10 rounded-2xl mb-6 shadow-lg">
+                            <h3 class="text-xl md:text-2xl font-bold">${service.name}</h3>
+                        </div>
+                        <p class="text-gray-600 text-sm md:text-base font-medium">Cliquez pour découvrir nos offres</p>
+                    </div>
+                `;
+
+                container.appendChild(serviceCard);
+            });
+        }
+
+        // Open pricing modal
+        function openPricingModal(service) {
+            const modal = document.getElementById('pricingModal');
+            const title = document.getElementById('modalTitle');
+            const options = document.getElementById('pricingOptions');
+            const content = document.querySelector('.pricing-content');
+
+            title.textContent = service.name;
+            options.innerHTML = '';
+
+            const periods = {
+                '1': '1 Mois',
+                '2': '2 Mois',
+                '3': '3 Mois',
+                '6': '6 Mois',
+                '12': '12 Mois'
+            };
+
+            const serviceColors = {
+                red: { bg: 'bg-red-500', hover: 'hover:bg-red-600', border: 'border-red-200', text: 'text-red-600' },
+                blue: { bg: 'bg-blue-500', hover: 'hover:bg-blue-600', border: 'border-blue-200', text: 'text-blue-600' },
+                purple: { bg: 'bg-purple-500', hover: 'hover:bg-purple-600', border: 'border-purple-200', text: 'text-purple-600' },
+                yellow: { bg: 'bg-yellow-400', hover: 'hover:bg-yellow-500', border: 'border-yellow-200', text: 'text-yellow-600' },
+                green: { bg: 'bg-green-500', hover: 'hover:bg-green-600', border: 'border-green-200', text: 'text-green-600' },
+                orange: { bg: 'bg-orange-500', hover: 'hover:bg-orange-600', border: 'border-orange-200', text: 'text-orange-600' }
+            };
+
+            const colors = serviceColors[service.color];
+
+            Object.entries(service.pricing).forEach(([period, data]) => {
+                // Skip if show is false
+                if (!data.show) return;
+
+                const optionDiv = document.createElement('div');
+                optionDiv.className = `pricing-option border rounded-xl p-4 md:p-6 ${data.available ? `border-gray-200 hover:${colors.border} hover:shadow-lg` : 'unavailable border-gray-100'}`;
+
+                if (data.available) {
+                    optionDiv.innerHTML = `
+                        <div class="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0">
+                            <div>
+                                <h4 class="text-lg md:text-xl font-bold text-gray-800">${periods[period]}</h4>
+                                ${data.bonus ? `<p class="text-sm text-green-600 font-medium">${data.bonus}</p>` : ''}
+                                <p class="text-2xl md:text-3xl font-bold ${colors.text}">${data.price} DA</p>
+                            </div>
+                            <div class="relative">
+                                <button onclick="showContactOptions(event, '${service.name}', '${periods[period]}', ${data.price})" 
+                                        class="${colors.bg} ${colors.hover} text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold btn-smooth w-full md:w-auto">
+                                    Commander
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    optionDiv.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-400">${periods[period]}</h4>
+                                <p class="text-2xl font-bold text-gray-400">${data.price} DA</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                options.appendChild(optionDiv);
+            });
+
+            modal.style.display = 'block';
+            setTimeout(() => {
+                modal.classList.add('show');
+                content.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close pricing modal
+        function closePricingModal() {
+            const modal = document.getElementById('pricingModal');
+            const content = document.querySelector('.pricing-content');
+            
+            modal.classList.remove('show');
+            content.classList.remove('show');
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }, 300);
+            
+            // Hide any open contact options
+            document.querySelectorAll('.contact-options').forEach(el => {
+                el.classList.remove('show');
+                setTimeout(() => el.remove(), 300);
+            });
+        }
+
+        // Show contact options
+        function showContactOptions(event, serviceName, period, price) {
+            event.stopPropagation();
+            
+            // Hide any existing contact options
+            document.querySelectorAll('.contact-options').forEach(el => el.remove());
+
+            const contactDiv = document.createElement('div');
+            contactDiv.className = 'contact-options';
+            contactDiv.style.display = 'block';
+            contactDiv.style.top = '100%';
+            contactDiv.style.left = '0';
+            contactDiv.style.marginTop = '10px';
+
+            const message = `Bonjour! Je suis intéressé(e) par ${serviceName} - ${period} (${price} DA). Pouvez-vous me donner plus d'informations?`;
+
+            contactDiv.innerHTML = `
+                <div class="p-4 space-y-2">
+                    <h5 class="font-semibold text-gray-800 mb-3">Choisir le moyen de contact :</h5>
+                    <a href="${CONTACT_LINKS.whatsapp}?text=${encodeURIComponent(message)}" target="_blank" 
+                       class="flex items-center space-x-3 p-3 hover:bg-green-50 rounded-lg transition-all duration-200 hover:transform hover:scale-105">
+                        <i class="fab fa-whatsapp text-green-500 text-xl"></i>
+                        <span class="text-gray-700 font-medium">WhatsApp</span>
+                    </a>
+                    <a href="${CONTACT_LINKS.instagram}" target="_blank" 
+                       class="flex items-center space-x-3 p-3 hover:bg-pink-50 rounded-lg transition-all duration-200 hover:transform hover:scale-105">
+                        <i class="fab fa-instagram text-pink-500 text-xl"></i>
+                        <span class="text-gray-700 font-medium">Instagram</span>
+                    </a>
+                    <a href="${CONTACT_LINKS.messenger}" target="_blank" 
+                       class="flex items-center space-x-3 p-3 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:transform hover:scale-105">
+                        <i class="fab fa-facebook-messenger text-blue-500 text-xl"></i>
+                        <span class="text-gray-700 font-medium">Messenger</span>
+                    </a>
+                </div>
+            `;
+
+            event.target.parentElement.style.position = 'relative';
+            event.target.parentElement.appendChild(contactDiv);
+            
+            setTimeout(() => {
+                contactDiv.classList.add('show');
+            }, 10);
+
+            // Close contact options when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', function closeContactOptions(e) {
+                    if (!contactDiv.contains(e.target) && e.target !== event.target) {
+                        contactDiv.classList.remove('show');
+                        setTimeout(() => contactDiv.remove(), 300);
+                        document.removeEventListener('click', closeContactOptions);
+                    }
+                });
+            }, 100);
+        }
+
+        // Enhanced smooth scroll function with custom animation
+        function smoothScroll(targetId) {
+            const element = document.getElementById(targetId);
+            if (element) {
+                const headerHeight = 100;
+                const elementPosition = element.offsetTop - headerHeight;
+                const startPosition = window.pageYOffset;
+                const distance = elementPosition - startPosition;
+                const duration = 1200; // Longer duration for smoother effect
+                let start = null;
+
+                function animation(currentTime) {
+                    if (start === null) start = currentTime;
+                    const timeElapsed = currentTime - start;
+                    const run = easeInOutCubic(timeElapsed, startPosition, distance, duration);
+                    window.scrollTo(0, run);
+                    if (timeElapsed < duration) requestAnimationFrame(animation);
+                }
+
+                // Easing function for smooth animation
+                function easeInOutCubic(t, b, c, d) {
+                    t /= d/2;
+                    if (t < 1) return c/2*t*t*t + b;
+                    t -= 2;
+                    return c/2*(t*t*t + 2) + b;
+                }
+
+                requestAnimationFrame(animation);
+            }
+            // Close mobile menu if open
+            document.getElementById('mobileMenu').classList.add('hidden');
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('pricingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePricingModal();
+            }
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // Initialize everything when page loads
+        window.addEventListener('load', () => {
+            initializeContactLinks();
+            generateServices();
+            
+            // Observe all fade-in elements
+            document.querySelectorAll('.fade-in').forEach(el => {
+                el.style.animationPlayState = 'paused';
+                observer.observe(el);
+            });
+
+            // Add loading animation
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Handle escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePricingModal();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b1f15b2472a85f',t:'MTc1NzIwMzQwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
