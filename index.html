@@ -15,21 +15,63 @@
         
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+            animation: backgroundMove 8s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        @keyframes backgroundMove {
+            0%, 100% {
+                transform: translateX(0) translateY(0) scale(1);
+            }
+            25% {
+                transform: translateX(-20px) translateY(-10px) scale(1.05);
+            }
+            50% {
+                transform: translateX(20px) translateY(10px) scale(0.95);
+            }
+            75% {
+                transform: translateX(-10px) translateY(20px) scale(1.02);
+            }
+        }
+        
+        .gradient-bg > * {
+            position: relative;
+            z-index: 1;
         }
         
         .card-hover {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .card-hover:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
         }
         
         .fade-in {
             opacity: 0;
-            transform: translateY(40px);
-            animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            transform: translateY(15px);
+            animation: fadeInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-play-state: paused;
+        }
+        
+        .fade-in.animate-visible {
+            animation-play-state: running;
         }
         
         @keyframes fadeInUp {
@@ -40,19 +82,19 @@
         }
         
         .floating {
-            animation: floating 4s ease-in-out infinite;
+            animation: floating 2.5s ease-in-out infinite;
         }
         
         @keyframes floating {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-8px); }
         }
         
         .service-card {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.4);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .service-card:hover {
@@ -70,7 +112,7 @@
             background: rgba(0, 0, 0, 0);
             z-index: 1000;
             backdrop-filter: blur(0px);
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         
         .pricing-modal.show {
@@ -87,9 +129,9 @@
             margin: 2rem auto;
             position: relative;
             top: 50%;
-            transform: translateY(-50%) scale(0.8);
+            transform: translateY(-50%) scale(0.9);
             opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .pricing-content.show {
@@ -108,10 +150,10 @@
             max-width: 90vw;
             transform: translateY(10px);
             opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
+            transform: translate(-50%, -50%) scale(0.95);
         }
         
         .contact-options.show {
@@ -128,7 +170,7 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.2s ease;
         }
         
         .contact-backdrop.show {
@@ -157,7 +199,7 @@
         }
         
         .btn-smooth {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -170,7 +212,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
+            transition: left 0.3s ease;
         }
         
         .btn-smooth:hover::before {
@@ -178,8 +220,8 @@
         }
         
         .btn-smooth:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
         }
         
         .btn-smooth:active {
@@ -188,14 +230,14 @@
         }
         
         .pricing-option {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
         
         .pricing-option:hover {
-            transform: translateX(5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateX(3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
         
         .unavailable {
@@ -222,6 +264,20 @@
                 margin: 1rem;
                 max-height: 85vh;
             }
+        }
+        
+        /* Performance optimizations */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -589,7 +645,7 @@
             setTimeout(() => {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
-            }, 300);
+            }, 200);
             
             // Hide any open contact options
             closeContactOptions();
@@ -658,43 +714,27 @@
             
             if (contactDiv) {
                 contactDiv.classList.remove('show');
-                setTimeout(() => contactDiv.remove(), 300);
+                setTimeout(() => contactDiv.remove(), 200);
             }
             
             if (backdrop) {
                 backdrop.classList.remove('show');
-                setTimeout(() => backdrop.remove(), 300);
+                setTimeout(() => backdrop.remove(), 200);
             }
         }
 
-        // Enhanced smooth scroll function with custom animation
+        // Enhanced smooth scroll function - Fixed and faster
         function smoothScroll(targetId) {
             const element = document.getElementById(targetId);
             if (element) {
-                const headerHeight = 100;
+                const headerHeight = 80;
                 const elementPosition = element.offsetTop - headerHeight;
-                const startPosition = window.pageYOffset;
-                const distance = elementPosition - startPosition;
-                const duration = 1200; // Longer duration for smoother effect
-                let start = null;
-
-                function animation(currentTime) {
-                    if (start === null) start = currentTime;
-                    const timeElapsed = currentTime - start;
-                    const run = easeInOutCubic(timeElapsed, startPosition, distance, duration);
-                    window.scrollTo(0, run);
-                    if (timeElapsed < duration) requestAnimationFrame(animation);
-                }
-
-                // Easing function for smooth animation
-                function easeInOutCubic(t, b, c, d) {
-                    t /= d/2;
-                    if (t < 1) return c/2*t*t*t + b;
-                    t -= 2;
-                    return c/2*(t*t*t + 2) + b;
-                }
-
-                requestAnimationFrame(animation);
+                
+                // Use native smooth scroll for better performance
+                window.scrollTo({
+                    top: elementPosition,
+                    behavior: 'smooth'
+                });
             }
             // Close mobile menu if open
             document.getElementById('mobileMenu').classList.add('hidden');
@@ -713,16 +753,17 @@
             }
         });
 
-        // Animate elements on scroll
+        // Animate elements on scroll - Fixed and optimized
         const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+            threshold: 0.05,
+            rootMargin: '0px 0px 50px 0px'
         };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.style.animationPlayState = 'running';
+                    entry.target.classList.add('animate-visible');
                 }
             });
         }, observerOptions);
@@ -732,10 +773,14 @@
             initializeContactLinks();
             generateServices();
             
-            // Observe all fade-in elements
-            document.querySelectorAll('.fade-in').forEach(el => {
-                el.style.animationPlayState = 'paused';
-                observer.observe(el);
+            // Observe all fade-in elements - Improved
+            document.querySelectorAll('.fade-in').forEach((el, index) => {
+                // Show first elements immediately
+                if (index === 0) {
+                    el.classList.add('animate-visible');
+                } else {
+                    observer.observe(el);
+                }
             });
 
             // Add loading animation
@@ -753,5 +798,5 @@
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b1f89ec00da85f',t:'MTc1NzIwMzcwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b20039a3d9a85f',t:'MTc1NzIwNDAxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
