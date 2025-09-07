@@ -99,19 +99,39 @@
         
         .contact-options {
             display: none;
-            position: absolute;
+            position: fixed;
             background: white;
             border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            z-index: 100;
-            min-width: 220px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            z-index: 1001;
+            min-width: 280px;
+            max-width: 90vw;
             transform: translateY(10px);
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
         }
         
         .contact-options.show {
-            transform: translateY(0);
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        
+        .contact-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .contact-backdrop.show {
             opacity: 1;
         }
         
@@ -572,10 +592,7 @@
             }, 300);
             
             // Hide any open contact options
-            document.querySelectorAll('.contact-options').forEach(el => {
-                el.classList.remove('show');
-                setTimeout(() => el.remove(), 300);
-            });
+            closeContactOptions();
         }
 
         // Show contact options
@@ -584,54 +601,70 @@
             
             // Hide any existing contact options
             document.querySelectorAll('.contact-options').forEach(el => el.remove());
+            document.querySelectorAll('.contact-backdrop').forEach(el => el.remove());
+
+            // Create backdrop
+            const backdrop = document.createElement('div');
+            backdrop.className = 'contact-backdrop';
+            document.body.appendChild(backdrop);
 
             const contactDiv = document.createElement('div');
             contactDiv.className = 'contact-options';
             contactDiv.style.display = 'block';
-            contactDiv.style.top = '100%';
-            contactDiv.style.left = '0';
-            contactDiv.style.marginTop = '10px';
 
             const message = `Bonjour! Je suis intéressé(e) par ${serviceName} - ${period} (${price} DA). Pouvez-vous me donner plus d'informations?`;
 
             contactDiv.innerHTML = `
-                <div class="p-4 space-y-2">
-                    <h5 class="font-semibold text-gray-800 mb-3">Choisir le moyen de contact :</h5>
+                <div class="p-6 space-y-3">
+                    <div class="flex justify-between items-center mb-4">
+                        <h5 class="font-semibold text-gray-800 text-lg">Choisir le moyen de contact :</h5>
+                        <button onclick="closeContactOptions()" class="text-gray-500 hover:text-gray-700 text-xl">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                     <a href="${CONTACT_LINKS.whatsapp}?text=${encodeURIComponent(message)}" target="_blank" 
-                       class="flex items-center space-x-3 p-3 hover:bg-green-50 rounded-lg transition-all duration-200 hover:transform hover:scale-105">
-                        <i class="fab fa-whatsapp text-green-500 text-xl"></i>
-                        <span class="text-gray-700 font-medium">WhatsApp</span>
+                       class="flex items-center space-x-4 p-4 hover:bg-green-50 rounded-lg transition-all duration-200 hover:transform hover:scale-105 border border-gray-100">
+                        <i class="fab fa-whatsapp text-green-500 text-2xl"></i>
+                        <span class="text-gray-700 font-medium text-lg">WhatsApp</span>
                     </a>
                     <a href="${CONTACT_LINKS.instagram}" target="_blank" 
-                       class="flex items-center space-x-3 p-3 hover:bg-pink-50 rounded-lg transition-all duration-200 hover:transform hover:scale-105">
-                        <i class="fab fa-instagram text-pink-500 text-xl"></i>
-                        <span class="text-gray-700 font-medium">Instagram</span>
+                       class="flex items-center space-x-4 p-4 hover:bg-pink-50 rounded-lg transition-all duration-200 hover:transform hover:scale-105 border border-gray-100">
+                        <i class="fab fa-instagram text-pink-500 text-2xl"></i>
+                        <span class="text-gray-700 font-medium text-lg">Instagram</span>
                     </a>
                     <a href="${CONTACT_LINKS.messenger}" target="_blank" 
-                       class="flex items-center space-x-3 p-3 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:transform hover:scale-105">
-                        <i class="fab fa-facebook-messenger text-blue-500 text-xl"></i>
-                        <span class="text-gray-700 font-medium">Messenger</span>
+                       class="flex items-center space-x-4 p-4 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:transform hover:scale-105 border border-gray-100">
+                        <i class="fab fa-facebook-messenger text-blue-500 text-2xl"></i>
+                        <span class="text-gray-700 font-medium text-lg">Messenger</span>
                     </a>
                 </div>
             `;
 
-            event.target.parentElement.style.position = 'relative';
-            event.target.parentElement.appendChild(contactDiv);
+            document.body.appendChild(contactDiv);
             
             setTimeout(() => {
+                backdrop.classList.add('show');
                 contactDiv.classList.add('show');
             }, 10);
 
-            // Close contact options when clicking outside
-            setTimeout(() => {
-                document.addEventListener('click', function closeContactOptions(e) {
-                    if (!contactDiv.contains(e.target) && e.target !== event.target) {
-                        contactDiv.classList.remove('show');
-                        setTimeout(() => contactDiv.remove(), 300);
-                        document.removeEventListener('click', closeContactOptions);
-                    }
-                });
-            }, 100);
+            // Close contact options when clicking backdrop
+            backdrop.addEventListener('click', closeContactOptions);
+        }
+
+        // Close contact options function
+        function closeContactOptions() {
+            const contactDiv = document.querySelector('.contact-options');
+            const backdrop = document.querySelector('.contact-backdrop');
+            
+            if (contactDiv) {
+                contactDiv.classList.remove('show');
+                setTimeout(() => contactDiv.remove(), 300);
+            }
+            
+            if (backdrop) {
+                backdrop.classList.remove('show');
+                setTimeout(() => backdrop.remove(), 300);
+            }
         }
 
         // Enhanced smooth scroll function with custom animation
@@ -720,5 +753,5 @@
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b1f15b2472a85f',t:'MTc1NzIwMzQwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b1f89ec00da85f',t:'MTc1NzIwMzcwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
